@@ -14,18 +14,20 @@ jobs:
           - windows-latest
     steps:
       - uses: actions/checkout@v3
-      - if: contains(matrix.os, 'ubuntu')
+      - name: Install dependencies (Ubuntu)
+        if: runner.os == 'Linux'
         run: sudo apt-get install nasm cmake libpng-dev
-      - if: contains(matrix.os, 'macos')
+      - name: Install dependencies (macOS)
+        if: runner.os == 'macOS'
         run: brew install cmake nasm libpng zlib
-      - if: contains(matrix.os, 'windows')
-        - uses: actions/checkout@v2
-        - uses: msys2/setup-msys2@v2
-          with:
-            update: true
-            install: zlib nasm libpng cmake
+      - name: Install dependencies (Windows)
+        if: runner.os == 'Windows'
+        uses: msys2/setup-msys2@v2
+        with:
+          update: true
+          install: zlib nasm libpng cmake
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-      - run: npm install
+      - run: npm ci
       - run: npm test
