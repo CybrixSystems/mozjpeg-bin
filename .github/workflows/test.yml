@@ -25,7 +25,7 @@ jobs:
         uses: msys2/setup-msys2@v2
         with:
           update: true
-          install: zlib nasm libpng cmake
+          install: zlib nasm mingw-w64-libpng cmake
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
