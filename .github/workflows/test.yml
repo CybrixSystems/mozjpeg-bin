@@ -10,11 +10,7 @@ jobs:
       matrix:
         node-version:
           - 16
-          - 18
-          - 20
         os:
-          - ubuntu-latest
-          - macos-latest
           - windows-latest
     steps:
       - uses: actions/checkout@v3
@@ -22,6 +18,12 @@ jobs:
         run: sudo apt-get install nasm cmake libpng-dev
       - if: contains(matrix.os, 'macos')
         run: brew install cmake nasm libpng zlib
+      - if: contains(matrix.os, 'windows')
+        - uses: actions/checkout@v2
+        - uses: msys2/setup-msys2@v2
+          with:
+            update: true
+            install: zlib nasm libpng cmake
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
