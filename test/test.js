@@ -11,14 +11,20 @@ import compareSize from 'compare-size';
 import mozjpeg from '../index.js';
 
 test('rebuild the mozjpeg binaries', async t => {
-	// Skip the test on Windows
-	if (process.platform === 'win32') {
-		t.pass();
-		return;
-	}
-
 	const temporary = tempy.directory();
 	const config = [];
+	// Skip the test on Windows
+	if (process.platform === 'win32') {
+		await execa.command('git clone https://github.com/microsoft/vcpkg.git');
+		// Build vcpkg
+		await execa.command('.\\vcpkg\\bootstrap-vcpkg.bat');
+		// Install libpng and zlib
+		await execa.command('.\\vcpkg\\vcpkg install libpng zlib');
+
+		// Add vcpkg toolchain file to the configuration
+		config.push('-DCMAKE_TOOLCHAIN_FILE=./vcpkg/scripts/buildsystems/vcpkg.cmake');
+	}
+
 	if (process.platform === 'darwin') {
 		config.push('-DCMAKE_FIND_FRAMEWORK=LAST -DBUILD_SHARED_LIBS=OFF');
 	}
